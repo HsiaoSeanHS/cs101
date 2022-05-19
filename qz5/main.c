@@ -1,58 +1,50 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-typedef struct node{
-	int data;
-	struct node* next;
-} node_t;
-
-
-node_t* allocate_node(int data){
-	node_t* next_node = (node_t*)calloc(1, sizeof(node_t));
-	next_node->data = data;
-	next_node->next = NULL;
-	return next_node;
+int do_before_adding(int* i) {
+	int num = *i;
+	*i += 1;
+	return num;
 }
 
-void show_list(node_t* list) {
-	while(list != NULL) {
-		printf("[%d]->", list->data);
-		list = list->next;
-	}
-	printf("null\n");
+int do_after_adding(int* i) {
+	*i += 1;
+	return *i;
 }
 
-node_t* append_node(node_t* list, int new_data) {
-	if(list == NULL) {
-		return allocate_node(new_data);
+void check_result(int x, int z, int t_x, int t_z){
+	if(x == t_x && z == t_z) {
+		printf("pass\n");
+	} else {
+		printf("fail\n");
 	}
-	node_t* head = list;
-	//find tail
-	while(list->next != NULL) {
-		list = list->next;
-	}
-	list->next = allocate_node(new_data);
-	return head;
 }
 
-void free_all_node(node_t* list) {
-	while(list != NULL) {
-		printf("free([%d])->", list->data);
-		list = list->next;
-	}
-	printf("null\n");
+void test_do_before_adding() {
+	int x = 1;
+	int z = 5 + do_before_adding(&x);
+	int t_x = 1;
+	int t_z = 5 + t_x++;
+	printf("do_before_adding()\n");
+	printf(" z=%d, x=%d, ", z, x);
+	printf(" t_z=%d, t_x=%d\n", t_z, t_x);
+	check_result(x, z, t_x, t_z);
+}
+
+void test_do_after_adding() {
+	int x = 1;
+	int z = 5 + do_after_adding(&x);
+	int t_x = 1;
+	int t_z = 5 + ++t_x;
+	printf("do_after_adding()\n");
+	printf(" z=%d, x=%d, ", z, x);
+	printf(" t_z=%d, t_x=%d\n", t_z, t_x);
+	check_result(x, z, t_x, t_z);
 }
 
 int main(void) {
-	node_t* head = NULL;
-	head = append_node(head, 0);
-	show_list(head);
-	head = append_node(head, 11);
-	show_list(head);
-	head = append_node(head, 222);
-	show_list(head);
-	head = append_node(head, 3333);
-	show_list(head);
-	free_all_node(head);
+	printf(" --- fun.1 --- ");
+	test_do_before_adding();
+	printf(" --- fun.2 --- ");
+	test_do_after_adding();
 	return 0;
 }
